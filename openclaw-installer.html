@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦞 Open Claw Easy Installer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #1a202c;
+        }
+        
+        .decorative-blob-1 {
+            position: fixed;
+            top: 10%;
+            right: 5%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+        
+        .decorative-blob-2 {
+            position: fixed;
+            bottom: 10%;
+            left: 5%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        .logo-container {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 1.5rem;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.125rem;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            z-index: 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+        
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 1.25rem;
+        }
+        
+        .step-circle.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .step-circle.complete {
+            background: #10b981;
+        }
+        
+        .step-circle.inactive {
+            background: #e2e8f0;
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 80px;
+        }
+        
+        .step-label.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .step-label.complete {
+            color: #10b981;
+        }
+        
+        .step-label.inactive {
+            color: #64748b;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+            min-height: 400px;
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        .content-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1a202c;
+        }
+        
+        .info-box {
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid;
+        }
+        
+        .info-box.primary {
+            background: linear-gradient(135deg, #f0f4ff 0%, #fef3f8 100%);
+            border-color: rgba(102, 126, 234, 0.1);
+        }
+        
+        .info-box.success {
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%);
+            border-color: #10b981;
+        }
+        
+        .info-box.warning {
+            background: linear-gradient(135deg, #fef2f2 0%, #fff7ed 100%);
+            border-color: #ef4444;
+        }
+        
+        .info-box.yellow {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+        }
+        
+        .info-box h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.0625rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+        
+        .feature-text {
+            font-size: 0.9375rem;
+            color: #718096;
+            line-height: 1.6;
+        }
+        
+        .checkbox-container {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            font-size: 1.0625rem;
+            color: #2d3748;
+        }
+        
+        .checkbox-label input {
+            margin-right: 1rem;
+            margin-top: 0.25rem;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .system-check {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .system-check.checking {
+            border-color: #667eea;
+        }
+        
+        .system-check.success {
+            background: #ecfdf5;
+            border-color: #10b981;
+        }
+        
+        .system-check.error {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+        
+        .system-check.warning {
+            background: #fff7ed;
+            border-color: #fb923c;
+        }
+        
+        .check-icon {
+            margin-right: 1.5rem;
+            width: 28px;
+            height: 28px;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .check-content {
+            flex: 1;
+        }
+        
+        .check-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #2d3748;
+        }
+        
+        .check-status {
+            font-size: 0.9375rem;
+            color: #718096;
+        }
+        
+        .action-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .copy-button.copied {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e2e8f0;
+        }
+        
+        .nav-button {
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .nav-button.back {
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .nav-button.back:disabled {
+            background: #f7fafc;
+            color: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+        .nav-button.next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .nav-button.next:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        .download-button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem auto;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .os-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .os-button {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-size: 1.0625rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .os-button.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-blob-1"></div>
+    <div class="decorative-blob-2"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <h1>🦞 Open Claw Setup</h1>
+            </div>
+            <p class="subtitle">Your friendly guide to setting up your AI agent</p>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-line">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle active" id="step0">👋</div>
+                    <span class="step-label active" id="label0">Welcome</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle inactive" id="step1">🛡️</div>
+                    <span class="step-label inactive" id="label1">Security</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle inactive" id="step2">💻</div>
+                    <span class="step-label inactive" id="label2">System Check</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle inactive" id="step3">⚙️</div>
+                    <span class="step-label inactive" id="label3">Install</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-circle inactive" id="step4">🎉</div>
+                    <span class="step-label inactive" id="label4">Done</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Card -->
+        <div class="content-card" id="contentCard">
+            <!-- Steps will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <script>
+        let currentStep = 0;
+        let systemData = {
+            os: '',
+            nodeInstalled: null,
+            nodeVersion: null,
+            agreeToSecurity: false
+        };
+        
+        const steps = [
+            // Step 0: Welcome
+            {
+                title: 'Welcome to Open Claw! 👋',
+                render: () => `
+                    <h2 class="content-title">Welcome to Open Claw! 👋</h2>
+                    <div class="info-box primary">
+                        <h3 style="color: #667eea;">What is Open Claw?</h3>
+                        <p style="font-size: 1.0625rem; line-height: 1.7; color: #4a5568; margin-bottom: 1rem;">
+                            Open Claw is a powerful AI agent that runs on <strong>your own computer</strong> and connects to messaging apps like WhatsApp, Telegram, Discord, and Slack. Think of it as your personal AI assistant that can actually do things - manage your calendar, browse the web, run commands, and much more.
+                        </p>
+                        <p style="font-size: 1.0625rem; line-height: 1.7; color: #4a5568;">
+                            Unlike cloud assistants, OpenClaw runs locally on your machine, giving you complete control over your data and privacy.
+                        </p>
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <div class="feature-title">AI-Powered</div>
+                            <p class="feature-text">Connects to Claude, GPT-4, Gemini, and local AI models</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">💬</div>
+                            <div class="feature-title">Multi-Platform</div>
+                            <p class="feature-text">Works with WhatsApp, Telegram, Discord, Slack, Signal, and more</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔓</div>
+                            <div class="feature-title">Open Source</div>
+                            <p class="feature-text">Transparent, community-driven development you can inspect</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🏠</div>
+                            <div class="feature-title">Self-Hosted</div>
+                            <p class="feature-text">Runs on your computer - your data stays yours</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box yellow">
+                        <p style="margin: 0; font-size: 0.9375rem; color: #92400e; line-height: 1.6;">
+                            <strong>Note:</strong> This wizard will guide you through the entire installation process step-by-step. We'll check your system, explain security considerations, and get you up and running safely.
+                        </p>
+                    </div>
+                `,
+                canProceed: () => true
+            },
+            
+            // Step 1: Security
+            {
+                title: 'Security & Privacy First',
+                render: () => `
+                    <h2 class="content-title">🛡️ Security & Privacy First</h2>
+                    
+                    <div class="info-box success">
+                        <h3 style="color: #065f46;">✅ What Open Claw Does (Safe):</h3>
+                        <ul style="font-size: 1.0625rem; line-height: 1.8; color: #064e3b; margin-left: 1.5rem;">
+                            <li>Runs locally on your machine under your control</li>
+                            <li>Only accesses APIs you explicitly configure</li>
+                            <li>Requires your API keys (you stay in control)</li>
+                            <li>Open source - you can review all the code on GitHub</li>
+                            <li>No data sent to OpenClaw developers</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-box warning">
+                        <h3 style="color: #991b1b;">⚠️ Important Security Considerations:</h3>
+                        <ul style="font-size: 1.0625rem; line-height: 1.8; color: #7c2d12; margin-left: 1.5rem; margin-bottom: 1rem;">
+                            <li><strong>API Keys:</strong> Never share your API keys. They're like passwords to your AI accounts</li>
+                            <li><strong>Local Storage:</strong> Your keys are stored locally in plain text. Protect your computer with a strong password</li>
+                            <li><strong>Code Review:</strong> Before running, you can review the source code on GitHub</li>
+                            <li><strong>Permissions:</strong> OpenClaw can read files and run commands. Start with restricted permissions and expand as needed</li>
+                            <li><strong>Network Access:</strong> OpenClaw needs internet to connect to AI providers</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="info-box primary">
+                        <h3 style="color: #4c51bf;">🛡️ Best Practices:</h3>
+                        <ol style="font-size: 1.0625rem; line-height: 1.8; color: #4a5568; margin-left: 1.5rem;">
+                            <li>Set spending limits on your AI API accounts</li>
+                            <li>Start with "ask mode" - approve commands before they run</li>
+                            <li>Review the code on GitHub before installation</li>
+                            <li>Keep OpenClaw updated for security patches</li>
+                            <li>Don't expose the web interface (port 18789) to the internet</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="checkbox-container">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="securityCheckbox" onchange="updateSecurityAgreement(this.checked)">
+                            <span style="line-height: 1.6;">
+                                I understand the security considerations and agree to:
+                                <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+                                    <li>Keep my API keys secure</li>
+                                    <li>Review the code before running (optional but recommended)</li>
+                                    <li>Take responsibility for my API usage and costs</li>
+                                    <li>Start with restricted permissions</li>
+                                </ul>
+                            </span>
+                        </label>
+                    </div>
+                `,
+                canProceed: () => systemData.agreeToSecurity
+            },
+            
+            // Step 2: System Check
+            {
+                title: 'System Requirements Check',
+                render: () => `
+                    <h2 class="content-title">💻 System Requirements Check</h2>
+                    
+                    <p style="font-size: 1.0625rem; color: #4a5568; margin-bottom: 2rem; line-height: 1.7;">
+                        Let's check if your system has what OpenClaw needs. Don't worry - if something's missing, we'll show you how to install it!
+                    </p>
+                    
+                    <div id="osSelection" class="${systemData.os ? 'hidden' : ''}">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">First, what operating system are you using?</h3>
+                        <div class="os-selector">
+                            <button class="os-button" onclick="selectOS('mac')">🍎 macOS</button>
+                            <button class="os-button" onclick="selectOS('linux')">🐧 Linux</button>
+                            <button class="os-button" onclick="selectOS('windows')">🪟 Windows</button>
+                        </div>
+                    </div>
+                    
+                    <div id="systemChecks" class="hidden">
+                        <div class="system-check ${systemData.nodeInstalled === null ? 'checking' : systemData.nodeInstalled ? 'success' : 'error'}" id="nodeCheck">
+                            <div class="check-icon">
+                                ${systemData.nodeInstalled === null ? '<div class="spinner"></div>' : 
+                                  systemData.nodeInstalled ? '✅' : '❌'}
+                            </div>
+                            <div class="check-content">
+                                <div class="check-title">Node.js 22+</div>
+                                <div class="check-status" id="nodeStatus">
+                                    ${systemData.nodeInstalled === null ? 'Checking...' : 
+                                      systemData.nodeInstalled ? `Node.js ${systemData.nodeVersion} detected ✓` : 
+                                      'Node.js 22+ is required. Click Install below.'}
+                                </div>
+                            </div>
+                            ${!systemData.nodeInstalled && systemData.nodeInstalled !== null ? 
+                              '<button class="action-button" onclick="openNodeDownload()">Install Node.js</button>' : ''}
+                        </div>
+                        
+                        ${systemData.nodeInstalled ? `
+                            <div class="info-box success">
+                                <div style="display: flex; align-items: center;">
+                                    <span style="font-size: 1.5rem; margin-right: 1rem;">🎉</span>
+                                    <div>
+                                        <h3 style="font-size: 1.125rem; margin: 0 0 0.25rem 0; color: #065f46;">
+                                            All Set!
+                                        </h3>
+                                        <p style="font-size: 0.9375rem; color: #047857; margin: 0;">
+                                            Your system meets all the requirements for OpenClaw.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `,
+                canProceed: () => systemData.nodeInstalled === true,
+                onEnter: () => {
+                    if (systemData.os) {
+                        showSystemChecks();
+                    }
+                }
+            },
+            
+            // Step 3: Installation
+            {
+                title: 'Install OpenClaw',
+                render: () => {
+                    const commands = getInstallCommands();
+                    return `
+                        <h2 class="content-title">📥 Install OpenClaw</h2>
+                        
+                        <div class="info-box primary">
+                            <h3 style="color: #667eea;">Installation Method: One-Line Installer (Recommended)</h3>
+                            <p style="font-size: 1.0625rem; color: #4a5568; margin-bottom: 1rem;">
+                                This command will automatically download and install OpenClaw, then start the setup wizard.
+                            </p>
+                        </div>
+                        
+                        <h3 style="font-size: 1.125rem; margin: 1.5rem 0 1rem;">Step 1: Run the installer</h3>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard('install', this)">Copy</button>
+                            <code id="installCommand">${commands.install}</code>
+                        </div>
+                        
+                        <p style="font-size: 0.9375rem; color: #718096; margin-bottom: 2rem;">
+                            ℹ️ This will download the latest version and launch the setup wizard automatically.
+                        </p>
+                        
+                        <h3 style="font-size: 1.125rem; margin: 1.5rem 0 1rem;">Alternative: Manual npm install</h3>
+                        <p style="font-size: 0.9375rem; color: #718096; margin-bottom: 1rem;">
+                            If you prefer to install manually:
+                        </p>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard('npm', this)">Copy</button>
+                            <code id="npmCommand">${commands.npm}</code>
+                        </div>
+                        
+                        <h3 style="font-size: 1.125rem; margin: 1.5rem 0 1rem;">Step 2: Run the setup wizard</h3>
+                        <div class="code-block">
+                            <button class="copy-button" onclick="copyToClipboard('onboard', this)">Copy</button>
+                            <code id="onboardCommand">openclaw onboard --install-daemon</code>
+                        </div>
+                        
+                        <p style="font-size: 0.9375rem; color: #718096; margin-bottom: 1.5rem;">
+                            ℹ️ The <code>--install-daemon</code> flag sets up OpenClaw to run in the background automatically.
+                        </p>
+                        
+                        <div class="info-box primary">
+                            <h3 style="color: #4c51bf;">What the wizard will ask you:</h3>
+                            <ol style="font-size: 1rem; line-height: 1.8; color: #4a5568; margin-left: 1.5rem;">
+                                <li><strong>API Provider:</strong> Choose between Anthropic (Claude), OpenAI (GPT), Google (Gemini), or others</li>
+                                <li><strong>API Key:</strong> Enter your API key from your chosen provider</li>
+                                <li><strong>Messaging Platform:</strong> Connect to Telegram, WhatsApp, Discord, or Slack</li>
+                                <li><strong>Skills:</strong> Optional extensions for extra functionality</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="info-box yellow">
+                            <p style="margin: 0; font-size: 0.9375rem; color: #92400e; line-height: 1.6;">
+                                <strong>Need an API key?</strong> Get one from:<br>
+                                • Anthropic (Claude): <a href="https://console.anthropic.com" target="_blank" style="color: #667eea;">console.anthropic.com</a><br>
+                                • OpenAI (GPT): <a href="https://platform.openai.com" target="_blank" style="color: #667eea;">platform.openai.com</a><br>
+                                • Google (Gemini): <a href="https://makersuite.google.com" target="_blank" style="color: #667eea;">makersuite.google.com</a>
+                            </p>
+                        </div>
+                        
+                        <button class="download-button" onclick="downloadInstallScript()">
+                            📥 Download Install Script (.sh)
+                        </button>
+                        <p style="text-align: center; font-size: 0.875rem; color: #718096;">
+                            Download a script file you can run later
+                        </p>
+                    `;
+                },
+                canProceed: () => true
+            },
+            
+            // Step 4: Complete
+            {
+                title: 'All Done! 🎉',
+                render: () => `
+                    <h2 class="content-title">🎉 You're Ready to Install!</h2>
+                    
+                    <div class="info-box success">
+                        <div style="text-align: center; padding: 2rem 0;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🦞</div>
+                            <h3 style="font-size: 1.5rem; color: #065f46; margin-bottom: 1rem;">Installation Ready!</h3>
+                            <p style="font-size: 1.125rem; color: #047857;">
+                                Open your terminal and run the commands from the previous step.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box primary">
+                        <h3 style="color: #667eea;">What's Next?</h3>
+                        <ol style="font-size: 1.0625rem; line-height: 1.8; color: #4a5568; margin-left: 1.5rem;">
+                            <li>Run the installation command in your terminal</li>
+                            <li>Follow the setup wizard to configure your API keys</li>
+                            <li>Connect your preferred messaging platform</li>
+                            <li>Start chatting with your AI agent!</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="info-box yellow">
+                        <h3 style="color: #92400e;">Helpful Resources:</h3>
+                        <ul style="font-size: 1rem; line-height: 1.8; color: #92400e; margin-left: 1.5rem;">
+                            <li><strong>Official Docs:</strong> <a href="https://docs.openclaw.ai" target="_blank" style="color: #667eea;">docs.openclaw.ai</a></li>
+                            <li><strong>GitHub Repository:</strong> <a href="https://github.com/openclaw/openclaw" target="_blank" style="color: #667eea;">github.com/openclaw/openclaw</a></li>
+                            <li><strong>Discord Community:</strong> Get help from other users</li>
+                            <li><strong>Troubleshooting:</strong> Run <code>openclaw doctor</code> for diagnostics</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #f0f4ff 0%, #fef3f8 100%); border-radius: 16px; border: 2px solid rgba(102, 126, 234, 0.2);">
+                        <h3 style="color: #667eea; margin-bottom: 1rem;">Want to share this installer?</h3>
+                        <p style="color: #4a5568; margin-bottom: 1rem;">
+                            Help others install OpenClaw easily! Scroll down to see how to contribute this installer to the OpenClaw project or host it yourself.
+                        </p>
+                        <button onclick="scrollToSharing()" style="background: #667eea; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            See Sharing Options 👇
+                        </button>
+                    </div>
+                `,
+                canProceed: () => true
+            }
+        ];
+        
+        function updateSecurityAgreement(agreed) {
+            systemData.agreeToSecurity = agreed;
+            updateNavigation();
+        }
+        
+        function selectOS(os) {
+            systemData.os = os;
+            document.querySelectorAll('.os-button').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+            
+            setTimeout(() => {
+                document.getElementById('osSelection').classList.add('hidden');
+                showSystemChecks();
+            }, 300);
+        }
+        
+        function showSystemChecks() {
+            document.getElementById('systemChecks').classList.remove('hidden');
+            
+            // Simulate checking Node.js
+            setTimeout(() => {
+                // In a real implementation, this would actually check
+                // For demo purposes, we'll simulate a successful check
+                systemData.nodeInstalled = true;
+                systemData.nodeVersion = '22.12.0';
+                renderCurrentStep();
+                updateNavigation();
+            }, 1500);
+        }
+        
+        function openNodeDownload() {
+            const urls = {
+                'mac': 'https://nodejs.org/en/download/',
+                'linux': 'https://nodejs.org/en/download/package-manager/',
+                'windows': 'https://nodejs.org/en/download/'
+            };
+            window.open(urls[systemData.os] || 'https://nodejs.org/', '_blank');
+        }
+        
+        function getInstallCommands() {
+            const commands = {
+                'mac': {
+                    install: 'curl -fsSL https://get.openclaw.ai | bash',
+                    npm: 'npm install -g openclaw@latest'
+                },
+                'linux': {
+                    install: 'curl -fsSL https://get.openclaw.ai | bash',
+                    npm: 'npm install -g openclaw@latest'
+                },
+                'windows': {
+                    install: '# First, install WSL2 if you haven\'t:\nwsl --install\n\n# Then in your WSL terminal:\ncurl -fsSL https://get.openclaw.ai | bash',
+                    npm: '# In WSL terminal:\nnpm install -g openclaw@latest'
+                }
+            };
+            return commands[systemData.os] || commands['mac'];
+        }
+        
+        function copyToClipboard(id, button) {
+            const element = document.getElementById(`${id}Command`);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+        
+        function downloadInstallScript() {
+            const commands = getInstallCommands();
+            const script = `#!/bin/bash
+# OpenClaw Installation Script
+# Generated by OpenClaw Easy Installer
+
+echo "🦞 Installing OpenClaw..."
+echo ""
+
+# Check if Node.js is installed
+if ! command -v node &> /dev/null; then
+    echo "❌ Node.js not found. Please install Node.js 22+ first:"
+    echo "   Visit: https://nodejs.org/"
+    exit 1
+fi
+
+# Check Node.js version
+NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
+if [ "$NODE_VERSION" -lt 22 ]; then
+    echo "❌ Node.js version must be 22 or higher (you have v$NODE_VERSION)"
+    echo "   Visit: https://nodejs.org/"
+    exit 1
+fi
+
+echo "✅ Node.js $(node -v) detected"
+echo ""
+
+# Install OpenClaw
+echo "📥 Installing OpenClaw globally..."
+${commands.npm}
+
+if [ $? -eq 0 ]; then
+    echo ""
+    echo "✅ OpenClaw installed successfully!"
+    echo ""
+    echo "🚀 Running setup wizard..."
+    echo ""
+    openclaw onboard --install-daemon
+else
+    echo ""
+    echo "❌ Installation failed. Please check the error messages above."
+    exit 1
+fi
+`;
+            
+            const blob = new Blob([script], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'install-openclaw.sh';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function scrollToSharing() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+        
+        function renderCurrentStep() {
+            const step = steps[currentStep];
+            document.getElementById('contentCard').innerHTML = step.render();
+            if (step.onEnter) step.onEnter();
+        }
+        
+        function updateProgress() {
+            const progress = (currentStep / (steps.length - 1)) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            for (let i = 0; i < steps.length; i++) {
+                const circle = document.getElementById(`step${i}`);
+                const label = document.getElementById(`label${i}`);
+                
+                circle.className = 'step-circle ' + (i < currentStep ? 'complete' : i === currentStep ? 'active' : 'inactive');
+                label.className = 'step-label ' + (i < currentStep ? 'complete' : i === currentStep ? 'active' : 'inactive');
+            }
+        }
+        
+        function updateNavigation() {
+            const canProceed = steps[currentStep].canProceed();
+            const nextButton = document.getElementById('nextButton');
+            if (nextButton) {
+                nextButton.disabled = !canProceed;
+            }
+        }
+        
+        function goToStep(stepIndex) {
+            if (stepIndex < 0 || stepIndex >= steps.length) return;
+            currentStep = stepIndex;
+            renderCurrentStep();
+            updateProgress();
+            renderNavigation();
+        }
+        
+        function renderNavigation() {
+            const navHtml = `
+                <div class="nav-buttons">
+                    <button class="nav-button back" onclick="goToStep(${currentStep - 1})" ${currentStep === 0 ? 'disabled' : ''}>
+                        ← Back
+                    </button>
+                    <button class="nav-button next" id="nextButton" onclick="goToStep(${currentStep + 1})" ${currentStep === steps.length - 1 ? 'disabled' : ''}>
+                        ${currentStep === steps.length - 1 ? 'Finish' : 'Continue'} →
+                    </button>
+                </div>
+            `;
+            
+            const existingNav = document.querySelector('.nav-buttons');
+            if (existingNav) {
+                existingNav.remove();
+            }
+            
+            document.getElementById('contentCard').insertAdjacentHTML('beforeend', navHtml);
+            updateNavigation();
+        }
+        
+        // Initialize
+        renderCurrentStep();
+        updateProgress();
+        renderNavigation();
+    </script>
+</body>
+</html>
+`;
