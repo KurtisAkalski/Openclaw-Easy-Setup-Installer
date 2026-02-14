@@ -641,7 +641,7 @@
                     
                     <div class="checkbox-container">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="securityCheckbox" onchange="updateSecurityAgreement(this.checked)">
+                            <input type="checkbox" id="securityCheckbox" data-handler="securityAgreement">
                             <span style="line-height: 1.6;">
                                 I understand the security considerations and agree to:
                                 <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
@@ -670,9 +670,9 @@
                     <div id="osSelection" class="${systemData.os ? 'hidden' : ''}">
                         <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">First, what operating system are you using?</h3>
                         <div class="os-selector">
-                            <button class="os-button" onclick="selectOS('mac')">🍎 macOS</button>
-                            <button class="os-button" onclick="selectOS('linux')">🐧 Linux</button>
-                            <button class="os-button" onclick="selectOS('windows')">🪟 Windows</button>
+                            <button class="os-button" data-os="mac">🍎 macOS</button>
+                            <button class="os-button" data-os="linux">🐧 Linux</button>
+                            <button class="os-button" data-os="windows">🪟 Windows</button>
                         </div>
                     </div>
                     
@@ -691,7 +691,7 @@
                                 </div>
                             </div>
                             ${!systemData.nodeInstalled && systemData.nodeInstalled !== null ? 
-                              '<button class="action-button" onclick="openNodeDownload()">Install Node.js</button>' : ''}
+                              '<button class="action-button" data-handler="nodeDownload">Install Node.js</button>' : ''}
                         </div>
                         
                         ${systemData.nodeInstalled ? `
@@ -736,7 +736,7 @@
                         
                         <h3 style="font-size: 1.125rem; margin: 1.5rem 0 1rem;">Step 1: Run the installer</h3>
                         <div class="code-block">
-                            <button class="copy-button" onclick="copyToClipboard('install', this)">Copy</button>
+                            <button class="copy-button" data-copy="install">Copy</button>
                             <code id="installCommand">${commands.install}</code>
                         </div>
                         
@@ -749,13 +749,13 @@
                             If you prefer to install manually:
                         </p>
                         <div class="code-block">
-                            <button class="copy-button" onclick="copyToClipboard('npm', this)">Copy</button>
+                            <button class="copy-button" data-copy="npm">Copy</button>
                             <code id="npmCommand">${commands.npm}</code>
                         </div>
                         
                         <h3 style="font-size: 1.125rem; margin: 1.5rem 0 1rem;">Step 2: Run the setup wizard</h3>
                         <div class="code-block">
-                            <button class="copy-button" onclick="copyToClipboard('onboard', this)">Copy</button>
+                            <button class="copy-button" data-copy="onboard">Copy</button>
                             <code id="onboardCommand">openclaw onboard --install-daemon</code>
                         </div>
                         
@@ -782,7 +782,7 @@
                             </p>
                         </div>
                         
-                        <button class="download-button" onclick="downloadInstallScript()">
+                        <button class="download-button" data-handler="downloadScript">
                             📥 Download Install Script (.sh)
                         </button>
                         <p style="text-align: center; font-size: 0.875rem; color: #718096;">
@@ -834,7 +834,7 @@
                         <p style="color: #4a5568; margin-bottom: 1rem;">
                             Help others install OpenClaw easily! Scroll down to see how to contribute this installer to the OpenClaw project or host it yourself.
                         </p>
-                        <button onclick="scrollToSharing()" style="background: #667eea; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <button data-handler="scrollToSharing" style="background: #667eea; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
                             See Sharing Options 👇
                         </button>
                     </div>
@@ -843,15 +843,61 @@
             }
         ];
         
+        // Event delegation setup
+        function setupEventHandlers() {
+            document.getElementById('contentCard').addEventListener('click', function(e) {
+                const target = e.target;
+                
+                // Handle OS selection buttons
+                if (target.classList.contains('os-button')) {
+                    const os = target.dataset.os;
+                    if (os) {
+                        selectOS(os, target);
+                    }
+                }
+                
+                // Handle copy buttons
+                if (target.classList.contains('copy-button')) {
+                    const copyId = target.dataset.copy;
+                    if (copyId) {
+                        copyToClipboard(copyId, target);
+                    }
+                }
+                
+                // Handle buttons with data-handler attribute
+                const handler = target.dataset.handler;
+                if (handler) {
+                    switch(handler) {
+                        case 'nodeDownload':
+                            openNodeDownload();
+                            break;
+                        case 'downloadScript':
+                            downloadInstallScript();
+                            break;
+                        case 'scrollToSharing':
+                            scrollToSharing();
+                            break;
+                    }
+                }
+            });
+            
+            // Handle checkbox for security agreement
+            document.getElementById('contentCard').addEventListener('change', function(e) {
+                if (e.target.id === 'securityCheckbox') {
+                    updateSecurityAgreement(e.target.checked);
+                }
+            });
+        }
+        
         function updateSecurityAgreement(agreed) {
             systemData.agreeToSecurity = agreed;
             updateNavigation();
         }
         
-        function selectOS(os) {
+        function selectOS(os, button) {
             systemData.os = os;
             document.querySelectorAll('.os-button').forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
+            button.classList.add('selected');
             
             setTimeout(() => {
                 document.getElementById('osSelection').classList.add('hidden');
@@ -869,7 +915,7 @@
                 systemData.nodeInstalled = true;
                 systemData.nodeVersion = '22.12.0';
                 renderCurrentStep();
-                updateNavigation();
+                renderNavigation(); // Re-render navigation after content update
             }, 1500);
         }
         
@@ -977,6 +1023,7 @@ fi
         function renderCurrentStep() {
             const step = steps[currentStep];
             document.getElementById('contentCard').innerHTML = step.render();
+            setupEventHandlers(); // Re-setup event listeners after content change
             if (step.onEnter) step.onEnter();
         }
         
@@ -1012,10 +1059,10 @@ fi
         function renderNavigation() {
             const navHtml = `
                 <div class="nav-buttons">
-                    <button class="nav-button back" onclick="goToStep(${currentStep - 1})" ${currentStep === 0 ? 'disabled' : ''}>
+                    <button class="nav-button back" data-nav="back" ${currentStep === 0 ? 'disabled' : ''}>
                         ← Back
                     </button>
-                    <button class="nav-button next" id="nextButton" onclick="goToStep(${currentStep + 1})" ${currentStep === steps.length - 1 ? 'disabled' : ''}>
+                    <button class="nav-button next" id="nextButton" data-nav="next" ${currentStep === steps.length - 1 ? 'disabled' : ''}>
                         ${currentStep === steps.length - 1 ? 'Finish' : 'Continue'} →
                     </button>
                 </div>
@@ -1027,6 +1074,19 @@ fi
             }
             
             document.getElementById('contentCard').insertAdjacentHTML('beforeend', navHtml);
+            
+            // Add navigation button handlers
+            const navButtons = document.querySelectorAll('[data-nav]');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.dataset.nav === 'back') {
+                        goToStep(currentStep - 1);
+                    } else if (this.dataset.nav === 'next') {
+                        goToStep(currentStep + 1);
+                    }
+                });
+            });
+            
             updateNavigation();
         }
         
@@ -1037,4 +1097,3 @@ fi
     </script>
 </body>
 </html>
-`;
